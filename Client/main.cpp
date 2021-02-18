@@ -6,11 +6,10 @@
 using namespace asio;
 using asio::ip::udp;
 
-int main()
-{
+int main() {
     io_service service;
 
-    udp::socket socket(service, udp::endpoint(udp::v4(), 0) );
+    udp::socket socket = session::sock(service, udp::endpoint(udp::v4(), 0));
     udp::endpoint ep(ip::address::from_string("127.0.0.1"), 500);
 
     std::string u_name;
@@ -18,12 +17,12 @@ int main()
     getline(std::cin, u_name);
     u_name += ": ";
 
-    manip mp;
-    while(true)
-    {
-        asio::thread g(std::bind(mp.sendData, &socket, ep, u_name));
-        mp.getData(&socket);
+    try {
+        while (true) {
+            asio::thread g(std::bind(session::sendData, &socket, ep, u_name));
+            session::getData(&socket);
+        }
     }
-
+    catch (std::exception &e) { }
     return 0;
 }

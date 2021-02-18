@@ -3,5 +3,5 @@ project(Client VERSION 0.0.1 LANGUAGES CXX)
 
 add_executable(Client main.cpp session.cpp session.h)
 
-target_link_libraries(Client PRIVATE asio)
+target_link_libraries(Client PRIVATE ASIO)
 

@@ -14,7 +14,8 @@ private:
     array endpoints;
 
 public:
-    void addEndpoint(const asio::ip::udp::endpoint& endP);
+    server();
+    void addEndpoint( asio::ip::udp::endpoint& endP);
 
     void session(asio::io_service& io_service, unsigned short port);
 };

@@ -6,7 +6,9 @@
 using namespace asio;
 using asio::ip::udp;
 
-void server::addEndpoint(const udp::endpoint& endP) {
+server::server() { }
+
+void server::addEndpoint( udp::endpoint& endP) {
     for (auto &endpoint : endpoints)
         if (endP == endpoint)
             return;
@@ -24,8 +26,8 @@ void server::session(asio::io_service& io_service, unsigned short port) {
         try {
             int bytes = socket.receive_from(buffer(buff), sender_ep);
             std::string msg(buff, bytes);
-
             addEndpoint(sender_ep);
+
             for (auto &endpoint : endpoints) {
                 if (endpoint != sender_ep)
                     socket.send_to(buffer(msg), endpoint);
@@ -39,5 +41,4 @@ void server::session(asio::io_service& io_service, unsigned short port) {
         }
     }
 }
-
 
