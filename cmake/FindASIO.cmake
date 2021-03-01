@@ -1,9 +1,44 @@
-include(FindPackageHandleStandardArgs)
 
-find_package_handle_standard_args(ASIO REQUIRED_VARS ASIO_INCLUDE_DIR)
+set(ASIO_SEARCH_PATHS
+        ${ASIO_ROOT})
+
+find_package(Threads QUIET)
+
+find_path(ASIO_INCLUDE_DIR asio.hpp
+        HINTS
+        $ENV{ASIO_ROOT}
+        PATH_SUFFIXES
+        include
+        include/asio
+        PATHS
+        ${ASIO_SEARCH_PATHS}
+        ~/Library/Frameworks
+        /Library/Frameworks
+        /usr/local/include
+        /usr/include
+        /sw/include # Fink
+        /opt/local/include # DarwinPorts
+        /opt/csw/include # Blastwave
+        /opt/include
+        /usr/freeware/include
+        )
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(ASIO
+        REQUIRED_VARS ASIO_INCLUDE_DIR
+        FAIL_MESSAGE "ASIO was not found")
 
 if (${ASIO_FOUND})
-    add_library(ASIO INTERFACE IMPORTED)
-    set_target_properties(ASIO PROPERTIES
+    add_library(ASIO::ASIO INTERFACE IMPORTED)
+    set_target_properties(ASIO::ASIO PROPERTIES
+            INTERFACE_COMPILE_DEFINITIONS "ASIO_STANDALONE"
             INTERFACE_INCLUDE_DIRECTORIES ${ASIO_INCLUDE_DIR})
+
+    target_link_libraries(ASIO::ASIO INTERFACE Threads::Threads ws2_32.lib)
+
+    message(STATUS "Asio include dir: ${ASIO_INCLUDE_DIR}")
+endif ()
+
+if (WIN32)
+    target_compile_definitions(ASIO::ASIO INTERFACE _WIN32_WINDOWS)
 endif ()
